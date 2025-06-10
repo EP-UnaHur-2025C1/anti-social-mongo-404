@@ -1,0 +1,69 @@
+{
+	"info": {
+		"_postman_id": "04d248f9-95ef-47dd-abc6-9d742a3c7524",
+		"name": "Trabajo Practico Mongo Grupo 404",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44629275",
+		"_collection_link": "https://luana-8734822.postman.co/workspace/Luana's-Workspace~a95c0b36-eba0-4d33-8b91-21463b39db82/collection/44629275-04d248f9-95ef-47dd-abc6-9d742a3c7524?action=share&source=collection_link&creator=44629275"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "User Post",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/user/getUser/68476de7cbf0f80999e6c276",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"getUser",
+								"68476de7cbf0f80999e6c276"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update User NickName",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Email",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
