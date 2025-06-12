@@ -1,4 +1,4 @@
-const {Post} = require('../db/models/post')
+const Post = require('../db/models/post')
 
 const validationSchemma = (schema) =>{
     return (req, res, next) =>{
@@ -11,15 +11,12 @@ const validationSchemma = (schema) =>{
 }
 
 const validIDPost = async (req, res, next) =>{
-
-    if(await Post.findOne({where:{id:req.params.id}})){
+    if(await Post.findOne({nickName:req.params.nickName})){
         next()
     }
-        
     else{
         return res.status(400).json({message:"Bad request: no se encuentra el post"})
     }
-    
 }
 
 module.exports = {validationSchemma, validIDPost};

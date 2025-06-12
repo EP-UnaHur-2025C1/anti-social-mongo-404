@@ -6,11 +6,6 @@ const Post_Image = new mongoose.Schema({
     required: true,
     unique: true
   },
-  post_image_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post',
-    required: true
-  }
 }, {
   timestamps: false
 });

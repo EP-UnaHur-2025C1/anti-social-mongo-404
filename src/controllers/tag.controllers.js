@@ -1,106 +1,107 @@
-const {Tag, Post, Post_tags} = require('../db/models/tag');
-
+const Tag = require('../db/models/tag');
+const Post = require('../db/models/post');
 const getTag = async (req, res) =>{
-
-  const tag = await Tag.findOne({where:{id:req.params.id}})
-  res.status(201).json(tag);
+  try {
+    const id = req.params.id
+    const tag = await Tag.findById(id);
+    if (!tag) {
+      return res.status(404).json({ message: 'No se encontro la etiqueta' });
+    }
+    res.status(200).json(tag);
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al obtener la etiqueta', error: error.message });
+  }
 }
 
-const getAllTags = async (req, res) =>{
-
-  const tag = await Tag.findAll()
-  res.status(201).json(tag);
+const getAllTags = async (req,res) => {
+  try {
+    const tags = await Tag.find()
+    res.status(200).json(tags)
+  } catch (error) {
+    res.status(500).json({error: error.message})
+  }
 }
 
 const createTag = async (req, res) =>{
     try {
-        
-        const newTag = await Tag.create({descripcion: req.body.descripcion})
-        res.status(201).json({message: "tag creado con exito"});
-      } catch (e) {
-        
-        res.status(400).json({ error: e });
+        const newTag = new Tag(req.body)
+        await newTag.save()
+        res.status(201).json(newTag);
+      } catch (error) {
+        res.status(400).json({ message: 'Error al crear el tag', error: error.message });
       }
 }
+
 const updateTag = async (req, res) =>{
     try {
-        
-        const idABuscar = await req.params.id
-        
-        const tagUpdated = await Tag.update(
-            //HACER UN MIDLEWARE DE QUE NO QUIERA PONER UN NICK REPETIDO
-            { descripcion: req.body.descripcion },
-            {
-              where: {
-                id: idABuscar,
-              },
-            });
-        res.status(201).json({message: "tag modificado con exito"});
-      } catch (e) {
-        
-        res.status(400).json({ error: e });
+        const tagActualizado = await Tag.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!tagActualizado) {
+          return res.status(404).json({ message: 'Tag no encontrado' });
+        }
+        res.status(200).json(tagActualizado);
+      } catch (error) {
+         res.status(400).json({ message: 'Error al actualizar el tag', error: error.message });
       }
 }
 
 const deleteTag = async (req, res) =>{
     try {
-        console.log(Post_tags)
-        const idABuscar = await req.params.id
-        
-        const deletedTag = await Tag.destroy(
-            //HACER UN MIDLEWARE DE QUE NO QUIERA PONER UN NICK REPETIDO
-            {where: {
-                id: idABuscar,
-              },
-            });
-            
-            
-        res.status(201).json({message: "tag borrado con exito"});
-      } catch (e) {
-        
-        res.status(400).json({ error: e });
+      const tagId = req.params.id;
+      const tagBorrado = await Tag.findByIdAndDelete(tagId);
+      if (!tagBorrado) {
+        return res.status(404).json({ message: 'Tag no encontrado' });
       }
-}
-
-const addTagToPost = async (req, res) =>{
-        try {
-            const idPostABuscar = req.params.idPost
-            const idTagABuscar = req.params.idTag
-            
-            const post = await Post.findOne({where:{id : idPostABuscar}})
-            const newPost = post.addTag(await Tag.findOne({where:{id : idTagABuscar}}))
-                
-                
-            res.status(201).json({message: "tag agregado con exito"});
-        } catch (e) {
-            
-            res.status(400).json({ error: e });
-        }
-}
-
-
-const addAllTagsToPost = async (req, res) =>{
-    try {
-        
-        const idPostABuscar = await req.params.id
-        
-        const post = await Post.findOne({where:{id : idPostABuscar}})
-
-        req.body.forEach(async(element)=> {
-          
-          post.addTag(await Tag.findOne({where:{id:element.id}}))
-          
-        });
-        
-            
-            
-        res.status(201).json(post);
-    } catch (e) {
-        
-        res.status(400).json({ error: e });
+      res.status(200).json({ message: 'Tag eliminado con éxito' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al eliminar el tag', error: error.message });
     }
 }
 
+const addTagToPost = async (req, res) => {
+  try {
+    const idPostABuscar = req.params.idPost;
+    const idTagABuscar = req.params.idTag;
+    const post = await Post.findById(idPostABuscar);
+    if (!post) return res.status(404).json({ error: "Post no encontrado" });
+
+    const tag = await Tag.findById(idTagABuscar);
+    if (!tag) return res.status(404).json({ error: "Tag no encontrado" });
+
+    if (!post.tags.includes(tag._id)) {
+      post.tags.push(tag._id);
+      await post.save();
+    }
+
+    res.status(201).json({ message: "Tag agregado con éxito" });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+};
+
+
+const addAllTagsToPost = async (req, res) => {
+  try {
+    const idPostABuscar = req.params.id;
+    const post = await Post.findById(idPostABuscar);
+
+    if (!post) {
+      return res.status(404).json({ error: "Post no encontrado" });
+    }
+    const tagIdsToAdd = [];
+
+    for (const element of req.body) {
+      const tag = await Tag.findById(element.id);
+      if (tag && !post.tags.includes(tag._id)) {
+        tagIdsToAdd.push(tag._id);
+      }
+    }
+    post.tags.push(...tagIdsToAdd);
+    await post.save();
+    res.status(201).json(post);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+};
 
 
 module.exports = {createTag,updateTag,deleteTag,addTagToPost,addAllTagsToPost, getTag, getAllTags};
