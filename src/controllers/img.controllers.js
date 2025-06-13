@@ -1,84 +1,106 @@
-const {Post_Image, Post } = require('../db/models/post_image');
+const Post_Image = require('../db/models/post_image');
+const Post = require('../db/models/post');
 
-//prueba a ver si comitea y no rompe 
-const getImg = async (req,res) => {
-    const data = await Post_Image.findOne({ where: { id: req.params.id }});
-    res.status(200).json(data);
+const getImg = async (req, res) => {
+  try {
+    const image = req.image; 
+    res.status(200).json(image);
+  } catch (error){
+    res.status(500).json({ message: 'Error al buscar la imagen', error: error.message });
+  }
 };
 
 const getAllImages = async (req,res) => {
-    const data = await Post_Image.findAll();
-    res.status(200).json(data);
+  try {
+    const images = await Post_Image.find()
+    if(images.length > 0){
+      res.status(200).json(images);
+    } else {
+      res.status(400).json({error: 'No existen imagenes'});
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener las imagenes', error: error.message });
+  }
+};
+ 
+const addImage = async (req, res) =>{
+  try {
+    const id = req.params.id
+    const post = await Post.findById(id)
+    if (!post) {
+      return res.status(404).json({ message: "Post no encontrado" });
+    }
+    const newImage = new Post_Image({ url: req.body.url });
+    await newImage.save();
+    post.image.push(newImage._id);
+    await post.save();
+    res.status(201).json(newImage);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+const addAllImages = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: "Post no encontrado" });
+    }
+    if (!Array.isArray(req.body)) {
+      return res.status(400).json({ message: "El cuerpo de la petición debe ser un arreglo" });
+    }
+    for (const element of req.body) {
+      if (element.url && typeof element.url === "string") {
+        const newImage = new Post_Image({ url: element.url });
+        await newImage.save();
+        post.image.push(newImage._id);
+      }
+    }
+    await post.save();
+
+    res.status(201).json({ message: "Imágenes agregadas con éxito" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
-const addImage = async (req, res) =>{
-    try {
-        
-        const post = await Post.findOne({where:{id : req.params.id}})
-        const newPost = post.createImage({url:req.body.url})
-        res.status(201).json({message: "Imagen agregada con exito"});
-      } catch (e) {
-        
-        res.status(400).json({ error: e });
-      }
-}
-const addAllImages = async (req, res) =>{
-    try {
-        
-        const post = await Post.findOne({where:{id : req.params.id}})
-
-        const images = req.body.forEach(element => {
-            console.log(element)
-            post.createImage({url:element.url})
-        });
-        res.status(201).json({message: "Imagen agregadas con exito"});
-      } catch (e) {
-        
-        res.status(400).json({ error: e });
-      }
-}
 const updateImage = async (req, res) =>{
-    try {
-        
-        const idABuscar = await req.params.id
-        
-        const imageUpdated = await Post_Image.update(
-            //HACER UN MIDLEWARE DE QUE NO QUIERA PONER UN NICK REPETIDO
-            { url: req.body.url },
-            {
-              where: {
-                id: idABuscar,
-              },
-            });
-        res.status(201).json({message: "Imagen modificada con exito"});
-      } catch (e) {
-        
-        res.status(400).json({ error: e });
-      }
+  try {
+    const id = req.params.id
+    const imageBuscada = await Post_Image.findByIdAndUpdate(id, req.body.url, { new:true });
+    if (!imageBuscada) {
+      res.status(404).json({ message: 'Post no encontrado' });
+    }
+    res.status(201).json({message: "Imagen modificada con exito"});
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 }
 const deleteImage = async (req, res) =>{
-    try {
-        const idABuscar = await req.params.id
-        
-        const deletedImage = await Post_Image.destroy(
-            //HACER UN MIDLEWARE DE QUE NO QUIERA PONER UN NICK REPETIDO
-            {where: {
-                id: idABuscar,
-              },
-            });
-            
-            
-        res.status(201).json({message: "Imagen borrada con exito"});
-      } catch (e) {
-        
-        res.status(400).json({ error: e });
-      }
+  try {
+    const id = req.params.id
+    const imageBuscada = await Post_Image.findByIdAndDelete(id)
+    if (!imageBuscada) {
+      res.status(404).json({ message: 'Imagen no encontrado' });
+    }
+    res.status(201).json({message: "Imagen borrada con exito"});
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
 }
 const getAllPostImage = async (req,res) => {
-    const post = await Post.findOne({where:{id : req.params.id},
-    include:'image'})
-    
-    res.status(200).json(post);
+  try{
+    const idPost = req.params.id
+    const postBuscado = await Post.findById(idPost)
+      .populate('image')
+    if (!postBuscado){
+      res.status(404).json({ message: 'Post no encontrado' })
+    }
+    res.status(201).json(postBuscado)
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
 };
 
 
