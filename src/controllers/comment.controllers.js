@@ -1,86 +1,94 @@
-const {Comment, Post} = require('../db/models/comment');
+const Comment = require('../db/models/comment');
+const Post = require('../db/models/post')
 
-const getComment = async (req,res) => {
-    const data = await Comment.findOne({where:{id: req.params.id}});
-    res.status(200).json(data);
+const getComment = async (req, res) => {
+    try {
+        const data = await Comment.findById(req.params.id);
+        if (!data) return res.status(404).json({ message: "Comentario no encontrado" });
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 };
 
-const getAllComments = async (req,res) => {
-    const data = await Comment.findAll();
-    res.status(200).json(data);
+const getAllComments = async (req, res) => {
+    try {
+        const data = await Comment.find();
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 };
-const createComment = async (req, res) =>{
-    try {
-        
-        const post = await Post.findOne({where:{id : req.params.id}})
-        const newComment = post.createComment({comentario:req.body.comentario})
-        res.status(201).json({message:"comentario creado con exito: "+newComment});
-      } catch (e) {
-        
-        res.status(400).json({ error: e });
-      }
-}
 
-const updateComment = async (req, res) =>{
-    try {
-        
-        const idABuscar = await req.params.id
-        
-        const commentUpdated = await Comment.update(
-            //HACER UN MIDLEWARE DE QUE NO QUIERA PONER UN NICK REPETIDO
-            { comentario: req.body.comentario },
-            {
-              where: {
-                id: idABuscar,
-              },
-            });
-        res.status(201).json({message:"comentario modificado con exito"});
-      } catch (e) {
-        
-        res.status(400).json({ error: e });
-      }
-}
-
-const deleteComment = async (req, res) =>{
-    try {
-        const idABuscar = await req.params.id
-        
-        const deletedComment = await Comment.destroy(
-            //HACER UN MIDLEWARE DE QUE NO QUIERA PONER UN NICK REPETIDO
-            {where: {
-                id: idABuscar,
-              },
-            });
-            
-            
-        res.status(201).json({message: "Comentario borrado con exito"});
-      } catch (e) {
-        
-        res.status(400).json({ error: e });
-      }
-}
-const getAllPostComment = async (req, res) =>{
-    try {
-        const idABuscar = await req.params.id
-        
-        const allComments = await Post.findOne(
-            //HACER UN MIDLEWARE DE QUE NO QUIERA PONER UN NICK REPETIDO
-            {where: {
-                id: idABuscar,
-              },
-              include: 'comment'
-            });
-            
-            
-        res.status(201).json(allComments);
-      } catch (e) {
-        
-        res.status(400).json({ error: e });
-      }
-}
+const createComment = async (req, res) => {
+  try {
+    const postId = req.params.id; 
+    const { comentario } = req.body;  
+    if (!comentario) {
+      return res.status(400).json({ error: 'El contenido del comentario es obligatorio.' });
+    }
+    const post = await Post.findById(postId).populate('user');
+    if (!post) {
+      return res.status(404).json({ error: 'Post no encontrado.' });
+    }
+    const newComment = new Comment({
+      comentario,
+      post: post._id,
+      user: post.user._id, 
+    });
+    await newComment.save();
+    post.comment.push();
+    res.status(201).json(newComment);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 
+const updateComment = async (req, res) => {
+  try {
+    const commentBuscado = await Comment.findByIdAndUpdate(
+      req.params.id,
+      { comentario: req.body.comentario },
+      { new: true, runValidators: true }
+    );
+    if (!commentBuscado){
+      return res.status(404).json({ message: "Comentario no encontrado" });
+    } 
+    res.status(200).json({ message: "Comentario modificado con éxito", comment: commentBuscado });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
 
+const deleteComment = async (req, res) => {
+  try {
+    const id = req.params.id
+    const commentBuscado = await Comment.findByIdAndDelete(id);
+    if (!commentBuscado) {
+      return res.status(404).json({ message: "Comentario no encontrado" });
+    } 
+    await Post.findByIdAndUpdate(commentBuscado.post, {
+      $pull: { comments: commentBuscado._id }
+    });
+    res.status(200).json({ message: "Comentario borrado con éxito" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const getAllPostComment = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post no encontrado" });
+    }
+    const comments = await Comment.find({ post: post._id }).populate('user'); 
+    res.status(200).json(comments);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 
 module.exports = {getComment,createComment,updateComment,deleteComment, getAllPostComment, getAllComments};
