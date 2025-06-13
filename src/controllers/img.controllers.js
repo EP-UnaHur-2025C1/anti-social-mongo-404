@@ -1,5 +1,6 @@
 const {Post_Image, Post } = require('../db/models/post_image');
 
+//prueba a ver si comitea y no rompe 
 const getImg = async (req,res) => {
     const data = await Post_Image.findOne({ where: { id: req.params.id }});
     res.status(200).json(data);
