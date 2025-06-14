@@ -279,7 +279,8 @@ paths:
       responses:
         '200':
           description: Imagen obtenida
-  /image/getAllImages:
+
+  /image/getImages:
     get:
       tags:
         - Image
@@ -299,32 +300,8 @@ paths:
         '500':
           description: Error del servidor
 
-  /image/addImage/{id}:
-    post:
-      tags:
-        - Image
-      summary: Agregar una imagen a un post
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: integer }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                url:
-                  type: string
-                  format: uri
-            example:
-              url: https://www.ejemplo.com/imagen.jpg
-      responses:
-        '201':
-          description: Imagen agregada
   
-  /image/addAllImages/{id}:
+  /image/addImages/{id}:
     post:
       tags:
         - Image
@@ -394,7 +371,7 @@ paths:
       responses:
         '204':
           description: Imagen eliminada
-  /image/getAllPostIMage/{id}:
+  /image/getImages/{id}:
     get:
       tags:
         - Image
@@ -531,6 +508,7 @@ paths:
       responses:
         '201':
           description: Etiqueta obtenida
+
   /tag/getAllTags:
     get:
       tags:
@@ -605,27 +583,9 @@ paths:
       responses:
         '201':
           description: Etiqueta eliminada
-  /tag/addTagToPost/{idPost}/{idTag}:
-    put:
-      tags:
-        - Tag
-      summary: Asociar etiqueta a post
-      parameters:
-        - in: path
-          name: idPost
-          required: true
-          schema: { type: integer }
-        - in: path
-          name: idTag
-          required: true
-          schema: { type: integer }
-      responses:
-        '201':
-          description: Etiqueta asociada
+  
 
-
-
-  /tag/addAllTagsToPost/{idPost}:
+  /tag/setTags/{idPost}:
     put:
       tags:
         - Tag
@@ -673,6 +633,7 @@ components:
         contenido:
           type: string
           example: Este es un post de ejemplo
+        
     Image:
       type: object
       properties:
@@ -686,6 +647,9 @@ components:
         comentario:
           type: string 
           example: Este es un comentario de ejemplo
+        nickName:
+          type: string
+          example: usuario1
     Tag: 
       type: object
       properties:
