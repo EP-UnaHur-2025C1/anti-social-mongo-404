@@ -10,17 +10,7 @@ const validationSchemma = (schema) =>{
     }
 }
 
-const validIDTag = async (req, res, next) => {
-  try {
-    const tag = await Tag.findById(req.params.id);
-    if (!tag) {
-      return res.status(400).json({ message: "Bad request: no se encuentra el IDTag" });
-    }
-    next();
-  } catch (error) {
-    return res.status(400).json({ message: "ID inválido", error: error.message });
-  }
-};
+
 
 
 const validPostYTag = async (req, res, next) => {
@@ -67,4 +57,4 @@ const validAllTags = async (req, res, next) => {
   }
 };
 
-module.exports = {validationSchemma,validIDTag,validPostYTag,validAllTags};
+module.exports = {validationSchemma,validPostYTag,validAllTags};

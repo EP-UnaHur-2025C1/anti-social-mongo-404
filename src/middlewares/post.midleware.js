@@ -10,13 +10,5 @@ const validationSchemma = (schema) =>{
     }
 }
 
-const validIDPost = async (req, res, next) =>{
-    if(await Post.findOne({nickName:req.params.nickName})){
-        next()
-    }
-    else{
-        return res.status(400).json({message:"Bad request: no se encuentra el post"})
-    }
-}
 
-module.exports = {validationSchemma, validIDPost};
+module.exports = {validationSchemma};
