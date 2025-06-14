@@ -12,7 +12,7 @@ router.get('/getAllTags',tagController.getAllTags);
 router.post("/createTag", validationSchemma(contenidoSchema), tagController.createTag);
 router.put("/updateTag/:id",invalidId,validSearch(Tag),validationSchemma(contenidoSchema), tagController.updateTag);
 router.delete("/deleteTag/:id",invalidId,validSearch(Tag), tagController.deleteTag);
-router.put("/addTagToPost/:idPost/:idTag",validPostYTag,validationSchemma(contenidoSchema), tagController.addTagToPost);
-router.put("/addAllTagsToPost/:id",validSearch(Tag),validAllTags, tagController.addAllTagsToPost);
+///router.put("/setTag/:idPost/:idTag",validPostYTag,validationSchemma(contenidoSchema), tagController.addTagToPost); 
+router.put("/setTags/:id",validSearch(Tag),validAllTags, tagController.addAllTagsToPost);
 
 module.exports = router;

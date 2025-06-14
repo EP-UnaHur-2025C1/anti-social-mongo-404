@@ -11,7 +11,7 @@ router.get('/getUser/:id',invalidId, validSearch(User), userControllers.getUsers
 router.get('/getAllUsers', userControllers.getAllUser)
 router.post('/createUser', validationSchemma(schema) ,userControllers.createUser);
 router.put('/updateNickName/:id',invalidId, validSearch(User), validNickname, userControllers.updateNickName)
-router.post('/seguirUsuario/:id/:idASeguir',invalidId, userControllers.followUser)//
+router.post('/seguirUsuario/:id/:idASeguir',invalidId, userControllers.followUser)
 router.put('/updateEmail/:id',invalidId, validSearch(User),validEmail,validationEmailSchema(emailSchema), userControllers.updateEmail)
 router.delete('/deleteUser/:id',invalidId, validSearch(User), userControllers.deleteUser)
 
