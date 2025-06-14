@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "04d248f9-95ef-47dd-abc6-9d742a3c7524",
+		"_postman_id": "eb16b896-acc9-4497-a45c-889a29da033f",
 		"name": "Trabajo Practico Mongo Grupo 404",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "44629275",
-		"_collection_link": "https://luana-8734822.postman.co/workspace/Luana's-Workspace~a95c0b36-eba0-4d33-8b91-21463b39db82/collection/44629275-04d248f9-95ef-47dd-abc6-9d742a3c7524?action=share&source=collection_link&creator=44629275"
+		"_exporter_id": "22100065"
 	},
 	"item": [
 		{
@@ -276,37 +275,6 @@
 					"response": []
 				},
 				{
-					"name": "Add tag to post",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"descripcion\":\"DESCRIPCION\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/tag/addTagToPost/684c3970daeeb8a768da51b7/684c37c0daeeb8a768da51a9",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"tag",
-								"addTagToPost",
-								"684c3970daeeb8a768da51b7",
-								"684c37c0daeeb8a768da51a9"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Add all tags to post",
 					"request": {
 						"method": "PUT",
@@ -321,7 +289,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/tag/addAllTagsToPost/684c3970daeeb8a768da51b7",
+							"raw": "http://localhost:3000/tag/setTags/684c3970daeeb8a768da51b7",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -329,7 +297,7 @@
 							"port": "3000",
 							"path": [
 								"tag",
-								"addAllTagsToPost",
+								"setTags",
 								"684c3970daeeb8a768da51b7"
 							]
 						}
@@ -484,36 +452,6 @@
 			"name": "Image",
 			"item": [
 				{
-					"name": "Add image",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"url\":\"http://grupo404GRUPOPERSISTENCIA/ejemploba\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:3000/image/addImage/684c3970daeeb8a768da51b7",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"image",
-								"addImage",
-								"684c3970daeeb8a768da51b7"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get image",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -569,7 +507,7 @@
 					"response": []
 				},
 				{
-					"name": "Add all images",
+					"name": "Add images",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -583,7 +521,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/image/addAllImages/684c3f9986a6d6ff5a7cb8a6",
+							"raw": "http://localhost:3000/image/addImages/684c3f9986a6d6ff5a7cb8a6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -591,7 +529,7 @@
 							"port": "3000",
 							"path": [
 								"image",
-								"addAllImages",
+								"addImages",
 								"684c3f9986a6d6ff5a7cb8a6"
 							]
 						}
@@ -611,7 +549,7 @@
 							"raw": "[\r\n    {\r\n    \"url\":\"https://www.google.com/url?sa=i&url=https%3A%2F%2Fcatfriendly.com%2F&psig=AOvVaw3bT_J2ZQLZywhxWUSYXSZd&ust=1746931641524000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCLDM-snxl40DFQAAAAAdAAAAABAE\"\r\n},\r\n{\r\n    \"url\":\"https://www.google.com/url?sa=i&url=https%3A%2F%2Fcatfriendly.com%2F&psig=AOvVaw3bT_J2ZQLZywhxWUSYXSZd&ust=1746931641524000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCLDM-snxl40DFQAAAAAdAAAAABAE\"\r\n},\r\n{\r\n    \"url\":\"https://www.google.com/url?sa=i&url=https%3A%2F%2Fcatfriendly.com%2F&psig=AOvVaw3bT_J2ZQLZywhxWUSYXSZd&ust=1746931641524000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCLDM-snxl40DFQAAAAAdAAAAABAE\"\r\n},\r\n{\r\n    \"url\":\"https://www.google.com/url?sa=i&url=https%3A%2F%2Fcatfriendly.com%2F&psig=AOvVaw3bT_J2ZQLZywhxWUSYXSZd&ust=1746931641524000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCLDM-snxl40DFQAAAAAdAAAAABAE\"\r\n}\r\n]"
 						},
 						"url": {
-							"raw": "http://localhost:3000/image/getAllPostIMage/684c3f9986a6d6ff5a7cb8a6",
+							"raw": "http://localhost:3000/image/getImages/684c3f9986a6d6ff5a7cb8a6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -619,7 +557,7 @@
 							"port": "3000",
 							"path": [
 								"image",
-								"getAllPostIMage",
+								"getImages",
 								"684c3f9986a6d6ff5a7cb8a6"
 							]
 						}
