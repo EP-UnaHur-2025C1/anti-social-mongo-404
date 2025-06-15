@@ -9,9 +9,7 @@ const getPost = async (req,res) => {
   try {
     const id = req.params.id
     const postBuscado = await Post.findById(id).populate('comment').populate('image').populate('tags');
-    if (!postBuscado) {
-      return res.status(404).json({ message: 'No se encontró el post' });
-    }
+    
     res.status(200).json(postBuscado);
   } catch (error) {
     return res.status(500).json({ message: 'Error al obtener el post', error: error.message });
@@ -56,9 +54,7 @@ const updatePost = async (req, res) =>{
   try {
     const id = req.params.id
     const postBuscado = await Post.findByIdAndUpdate(id, req.body, { new: true });
-    if (!postBuscado) {
-      res.status(404).json({ message: 'Post no encontrado' });
-    }
+    
     res.status(200).json({message: "Post actualizado con exito", post: postBuscado});
   } catch (error) {
     res.status(500).json({ message: 'Error al actualizar el post', error: error.message });
@@ -69,9 +65,7 @@ const deletePost = async (req, res) =>{
   try {
     const id = req.params.id
     const postBuscado = await Post.findByIdAndDelete(id)
-    if (!postBuscado) {
-      res.status(404).json({ message: 'Post no encontrado' });
-    }
+    
     res.status(200).json({ message: 'Post eliminado con éxito' }); 
   } catch (error) {
     res.status(400).json({ error: error.message });

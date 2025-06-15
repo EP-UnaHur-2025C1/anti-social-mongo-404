@@ -4,7 +4,7 @@ const Post = require('../db/models/post')
 const getComment = async (req, res) => {
     try {
         const data = await Comment.findById(req.params.id);
-        if (!data) return res.status(404).json({ message: "Comentario no encontrado" });
+        
         res.status(200).json(data);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -28,9 +28,7 @@ const createComment = async (req, res) => {
       return res.status(400).json({ error: 'El contenido del comentario es obligatorio.' });
     }
     const post = await Post.findById(postId).populate('user');
-    if (!post) {
-      return res.status(404).json({ error: 'Post no encontrado.' });
-    }
+    
     const newComment = new Comment({
       comentario,
       post: post._id,
@@ -52,9 +50,7 @@ const updateComment = async (req, res) => {
       { comentario: req.body.comentario },
       { new: true, runValidators: true }
     );
-    if (!commentBuscado){
-      return res.status(404).json({ message: "Comentario no encontrado" });
-    } 
+    
     res.status(200).json({ message: "Comentario modificado con éxito", comment: commentBuscado });
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -65,9 +61,7 @@ const deleteComment = async (req, res) => {
   try {
     const id = req.params.id
     const commentBuscado = await Comment.findByIdAndDelete(id);
-    if (!commentBuscado) {
-      return res.status(404).json({ message: "Comentario no encontrado" });
-    } 
+    
     await Post.findByIdAndUpdate(commentBuscado.post, {
       $pull: { comments: commentBuscado._id }
     });
@@ -80,9 +74,7 @@ const deleteComment = async (req, res) => {
 const getAllPostComment = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: "Post no encontrado" });
-    }
+    
     const comments = await Comment.find({ post: post._id }).populate('user'); 
     res.status(200).json(comments);
   } catch (error) {

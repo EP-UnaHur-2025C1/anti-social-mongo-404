@@ -27,9 +27,7 @@ const addImage = async (req, res) =>{
   try {
     const id = req.params.id
     const post = await Post.findById(id)
-    if (!post) {
-      return res.status(404).json({ message: "Post no encontrado" });
-    }
+    
     const newImage = new Post_Image({ url: req.body.url });
     await newImage.save();
     post.image.push(newImage._id);
@@ -44,9 +42,7 @@ const addAllImages = async (req, res) => {
   try {
     const id = req.params.id;
     const post = await Post.findById(id);
-    if (!post) {
-      return res.status(404).json({ message: "Post no encontrado" });
-    }
+    
     if (!Array.isArray(req.body)) {
       return res.status(400).json({ message: "El cuerpo de la petición debe ser un arreglo" });
     }
@@ -69,9 +65,7 @@ const updateImage = async (req, res) =>{
   try {
     const id = req.params.id
     const imageBuscada = await Post_Image.findByIdAndUpdate(id, req.body.url, { new:true });
-    if (!imageBuscada) {
-      res.status(404).json({ message: 'Post no encontrado' });
-    }
+    
     res.status(201).json({message: "Imagen modificada con exito"});
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -81,9 +75,7 @@ const deleteImage = async (req, res) =>{
   try {
     const id = req.params.id
     const imageBuscada = await Post_Image.findByIdAndDelete(id)
-    if (!imageBuscada) {
-      res.status(404).json({ message: 'Imagen no encontrado' });
-    }
+    
     res.status(201).json({message: "Imagen borrada con exito"});
   } catch (error) {
       res.status(400).json({ error: error.message });
@@ -94,9 +86,7 @@ const getAllPostImage = async (req,res) => {
     const idPost = req.params.id
     const postBuscado = await Post.findById(idPost)
       .populate('image')
-    if (!postBuscado){
-      res.status(404).json({ message: 'Post no encontrado' })
-    }
+    
     res.status(201).json(postBuscado)
   } catch (error) {
       res.status(400).json({ error: error.message });

@@ -4,9 +4,7 @@ const getTag = async (req, res) =>{
   try {
     const id = req.params.id
     const tag = await Tag.findById(id);
-    if (!tag) {
-      return res.status(404).json({ message: 'No se encontro la etiqueta' });
-    }
+    
     res.status(200).json(tag);
   } catch (error) {
     return res.status(500).json({ message: 'Error al obtener la etiqueta', error: error.message });
@@ -35,9 +33,7 @@ const createTag = async (req, res) =>{
 const updateTag = async (req, res) =>{
     try {
         const tagActualizado = await Tag.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!tagActualizado) {
-          return res.status(404).json({ message: 'Tag no encontrado' });
-        }
+        
         res.status(200).json(tagActualizado);
       } catch (error) {
          res.status(400).json({ message: 'Error al actualizar el tag', error: error.message });
@@ -48,15 +44,14 @@ const deleteTag = async (req, res) =>{
     try {
       const tagId = req.params.id;
       const tagBorrado = await Tag.findByIdAndDelete(tagId);
-      if (!tagBorrado) {
-        return res.status(404).json({ message: 'Tag no encontrado' });
-      }
+      
       res.status(200).json({ message: 'Tag eliminado con éxito' });
     } catch (error) {
       res.status(500).json({ message: 'Error al eliminar el tag', error: error.message });
     }
 }
 
+/*
 const addTagToPost = async (req, res) => {
   try {
     const idPostABuscar = req.params.idPost;
@@ -77,16 +72,14 @@ const addTagToPost = async (req, res) => {
     res.status(400).json({ error: e.message });
   }
 };
-
+*/
 
 const addAllTagsToPost = async (req, res) => {
   try {
     const idPostABuscar = req.params.id;
     const post = await Post.findById(idPostABuscar);
 
-    if (!post) {
-      return res.status(404).json({ error: "Post no encontrado" });
-    }
+    
     const tagIdsToAdd = [];
 
     for (const element of req.body) {
@@ -104,4 +97,4 @@ const addAllTagsToPost = async (req, res) => {
 };
 
 
-module.exports = {createTag,updateTag,deleteTag,addTagToPost,addAllTagsToPost, getTag, getAllTags};
+module.exports = {createTag,updateTag,deleteTag,addAllTagsToPost, getTag, getAllTags};
