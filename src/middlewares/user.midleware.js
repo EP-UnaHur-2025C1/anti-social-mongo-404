@@ -57,4 +57,6 @@ const validationEmailSchema = (schema) =>{
     }
 }
 
+
+
 module.exports = {validUser,validNickname, validEmail, validationSchemma, validationEmailSchema}    

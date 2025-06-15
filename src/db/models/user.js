@@ -6,7 +6,7 @@ const User = new mongoose.Schema({
     required: [true, 'El nickname es obligatorio'],
     unique: true,
     trim: true,
-    minlength: [8, 'El nickname debe tener al menos 3 caracteres'],
+    minlength: [8, 'El nickname debe tener al menos 8 caracteres'],
     maxlength: [12, 'El nickname no puede exceder los 12 caracteres'],
 
   },
@@ -23,6 +23,10 @@ const User = new mongoose.Schema({
     }
   },
   followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+    posts: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],

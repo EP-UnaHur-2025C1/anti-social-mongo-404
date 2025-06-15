@@ -32,7 +32,7 @@ const createTag = async (req, res) =>{
 
 const updateTag = async (req, res) =>{
     try {
-        const tagActualizado = await Tag.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const tagActualizado = await Tag.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         
         res.status(200).json(tagActualizado);
       } catch (error) {

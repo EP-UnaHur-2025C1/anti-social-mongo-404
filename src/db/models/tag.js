@@ -5,7 +5,7 @@ const Tag = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    minlength: [5, 'La descripción debe tener al menos 3 caracteres'],
+    minlength: [5, 'La descripción debe tener al menos 5 caracteres'],
     maxlength: [50, 'La descripción no puede exceder los 50 caracteres'],
   }
 }, {

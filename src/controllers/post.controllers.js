@@ -71,6 +71,7 @@ const deletePost = async (req, res) =>{
     res.status(400).json({ error: error.message });
   }
 }
+/*
 const getAllUserPost = async (req,res) => {
     const user = await User.findOne({where:{id : req.params.id},
     include: [{
@@ -95,7 +96,21 @@ const getAllUserPost = async (req,res) => {
     
     res.status(200).json(user);
 };
-
+*/
+const getAllUserPost = async (req, res) => {
+  try {
+    const idUser = req.params.id;
+    const posts = await Post.find({ user: idUser });
+    if(posts){
+      res.status(200).json(posts);
+    } else {
+      res.status(400).json({message:`No existen post del usuario ${idUser}`})
+    }
+      
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 
 module.exports = {getPost, createPost, updatePost,deletePost, getAllUserPost, getAllPosts};
