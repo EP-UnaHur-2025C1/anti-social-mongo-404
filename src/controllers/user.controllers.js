@@ -14,7 +14,7 @@ const getUsers = async (req,res) => {
 const getAllUser = async (req,res) => {
   try {
     const users = await User.find()
-      .select('nickName email followers following -_id' )
+      .select('nickName email followers following _id' )
     res.status(200).json(users)
   } catch (error) {
     res.status(500).json({error: error.message})

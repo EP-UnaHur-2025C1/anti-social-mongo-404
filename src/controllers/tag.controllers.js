@@ -85,7 +85,7 @@ const addAllTagsToPost = async (req, res) => {
     for (const element of req.body) {
       const tag = await Tag.findById(element.id);
       if (tag && !post.tags.includes(tag._id)) {
-        tagIdsToAdd.push(tag._id);
+        tagIdsToAdd.push(tag);
       }
     }
     post.tags.push(...tagIdsToAdd);

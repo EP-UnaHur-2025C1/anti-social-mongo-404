@@ -52,6 +52,7 @@ const addAllImages = async (req, res) => {
         const newImage = new Post_Image({ url: element.url });
         await newImage.save();
         post.image.push(newImage._id);
+        console.log(newImage)
       }
     }
     await post.save();
@@ -65,7 +66,7 @@ const addAllImages = async (req, res) => {
 const updateImage = async (req, res) =>{
   try {
     const id = req.params.id
-    const imageBuscada = await Post_Image.findByIdAndUpdate(id, req.body.url, { new:true });
+    const imageBuscada = await Post_Image.findByIdAndUpdate(id, req.body, { new:true });
     
     res.status(201).json({message: "Imagen modificada con exito", image: imageBuscada});
   } catch (error) {

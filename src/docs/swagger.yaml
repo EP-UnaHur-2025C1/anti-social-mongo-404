@@ -30,7 +30,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type: string }
       responses:
         '200':
           description: Usuario obtenido con éxito
@@ -81,7 +81,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type: string }
       requestBody:
         required: true
         content:
@@ -105,7 +105,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       requestBody:
         required: true
         content:
@@ -129,11 +129,11 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
         - in: path
           name: idASeguir
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '200':
           description: Usuario seguido
@@ -146,7 +146,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '204':
           description: Usuario eliminado
@@ -161,7 +161,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '200':
           description: Post obtenido
@@ -194,7 +194,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '200':
           description: Posts del usuario
@@ -237,7 +237,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       requestBody:
         required: true
         content:
@@ -260,7 +260,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '204':
           description: Post eliminado
@@ -275,7 +275,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '200':
           description: Imagen obtenida
@@ -311,7 +311,7 @@ paths:
           name: id
           required: true
           schema:
-            type: integer
+            type : string
           description: ID del post al que se le agregarán las imágenes
       requestBody:
         required: true
@@ -343,7 +343,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       requestBody:
         required: true
         content:
@@ -367,7 +367,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '204':
           description: Imagen eliminada
@@ -380,7 +380,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '200':
           description: Imágenes del post
@@ -395,10 +395,10 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '200':
-          description: Comentario obtenido
+          description: Comentario obtenidoF
 
   /comment/getAllComments:
     get:
@@ -429,7 +429,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '200':
           description: Comentarios obtenidos
@@ -442,7 +442,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       requestBody:
         required: true
         content:
@@ -466,7 +466,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       requestBody:
         required: true
         content:
@@ -489,7 +489,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '204':
           description: Comentario eliminado
@@ -504,7 +504,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '201':
           description: Etiqueta obtenida
@@ -556,7 +556,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       requestBody:
         required: true
         content:
@@ -579,7 +579,7 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: integer }
+          schema: { type : string }
       responses:
         '201':
           description: Etiqueta eliminada
@@ -595,7 +595,7 @@ paths:
           name: idPost
           required: true
           schema:
-            type: integer
+            type : string
           description: ID del post al que se le agregarán las etiquetas
       requestBody:
         required: true
@@ -607,10 +607,10 @@ paths:
                 type: object
                 properties:
                   id:
-                    type: integer
+                    type : string
             example:
-              - id: 1
-              - id: 2
+              - id: "16851b2bb66038253bb6a7b11"
+              - id: "16851b12366038253bb6a7b11"
       responses:
         '201':
           description: Etiquetas asociadas correctamente

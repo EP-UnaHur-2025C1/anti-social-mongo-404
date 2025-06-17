@@ -5,6 +5,7 @@ const {invalidId, validSearch} = require ('../middlewares/generic.midleware');
 const {contenidoSchema} = require('../schemas/tag.schemas');
 const {validationSchemma,validPostYTag,validAllTags} = require('../middlewares/tag.midleware');
 const Tag = require('../db/models/tag');
+const Post = require('../db/models/post');
 
 
 router.get('/getTag/:id',invalidId,validSearch(Tag), tagController.getTag);
@@ -13,6 +14,6 @@ router.post("/createTag", validationSchemma(contenidoSchema), tagController.crea
 router.put("/updateTag/:id",invalidId,validSearch(Tag),validationSchemma(contenidoSchema), tagController.updateTag);
 router.delete("/deleteTag/:id",invalidId,validSearch(Tag), tagController.deleteTag);
 ///router.put("/setTag/:idPost/:idTag",validPostYTag,validationSchemma(contenidoSchema), tagController.addTagToPost); 
-router.put("/setTags/:id",validSearch(Tag),validAllTags, tagController.addAllTagsToPost);
+router.put("/setTags/:id",validSearch(Post),validAllTags, tagController.addAllTagsToPost);
 
 module.exports = router;

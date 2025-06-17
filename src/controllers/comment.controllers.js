@@ -3,7 +3,7 @@ const Post = require('../db/models/post')
 
 const getComment = async (req, res) => {
     try {
-        const data = await Comment.findById(req.params.id);
+        const data = await Comment.findById(req.params.id).populate('user');
         
         res.status(200).json(data);
     } catch (error) {

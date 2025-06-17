@@ -100,7 +100,7 @@ const getAllUserPost = async (req,res) => {
 const getAllUserPost = async (req, res) => {
   try {
     const idUser = req.params.id;
-    const posts = await Post.find({ user: idUser });
+    const posts = await Post.find({ user: idUser }).populate('tags');
     if(posts){
       res.status(200).json(posts);
     } else {
