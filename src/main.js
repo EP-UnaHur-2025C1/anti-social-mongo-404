@@ -1,6 +1,7 @@
 require('dotenv').config();
 const conectarDB = require('./db/config/db.js')
 const express = require('express');
+const conectarRedis = require('./db/config/redis.js')
 const app = express();
 const PORT = process.env.PORT || 3001
 const {userRoute, postRoute, imgRoute, commentRoute, tagRoute} = require('./routes')
@@ -24,6 +25,7 @@ conectarDB()
 
 app.listen(PORT, async () => {
     console.log(`La app arranco en el puerto ${PORT}.`);
+    await conectarRedis.connect();
 })
 
 

@@ -1,11 +1,20 @@
+require('dotenv').config();
 const Post_Image = require('../db/models/post_image');
 const Post = require('../db/models/post');
+const redisClient = require('../db/config/redis.js');
+const TTL = process.env.TTL || 60
 
 const getImg = async (req, res) => {
   try {
+    const cacheKey = `image:${req.params.id}`
+    const cached = await redisClient.get(cacheKey)
+    if(cached){
+      return res.status(200).json(JSON.parse(cached))
+    }
     const id = req.params.id
     const image = await Post_Image.findById(id); 
-      res.status(200).json(image);
+    await redisClient.set(cacheKey, JSON.stringify(image), { EX: TTL })
+    res.status(200).json(image);
   } catch (error){
     res.status(500).json({ message: 'Error al buscar la imagen', error: error.message });
   }
@@ -13,8 +22,14 @@ const getImg = async (req, res) => {
 
 const getAllImages = async (req,res) => {
   try {
+    const cacheKey = 'image:all'
+    const cached = await redisClient.get(cacheKey)
+    if(cached){
+      return res.status(200).json(JSON.parse(cached))
+    }
     const images = await Post_Image.find();
     if(images.length > 0){
+      await redisClient.set(cacheKey, JSON.stringify(images), { EX: TTL })
       res.status(200).json(images);
     } else {
       res.status(400).json({error: 'No existen imagenes'});
@@ -28,11 +43,11 @@ const addImage = async (req, res) =>{
   try {
     const id = req.params.id
     const post = await Post.findById(id)
-    
     const newImage = new Post_Image({ url: req.body.url });
     await newImage.save();
     post.image.push(newImage._id);
     await post.save();
+    await redisClient.del('image:all')
     res.status(201).json(newImage);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -56,8 +71,9 @@ const addAllImages = async (req, res) => {
       }
     }
     await post.save();
-
-    res.status(201).json({ message: "Imágenes agregadas con éxito" });
+    await redisClient.del(`image:${req.params.id}`)
+    await redisClient.del('image:all')
+    res.status(201).json({ message: "Imágenes agregadas con éxito", });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -67,7 +83,8 @@ const updateImage = async (req, res) =>{
   try {
     const id = req.params.id
     const imageBuscada = await Post_Image.findByIdAndUpdate(id, req.body, { new:true });
-    
+    await redisClient.del(`image:${req.params.id}`)
+    await redisClient.del('image:all')
     res.status(201).json({message: "Imagen modificada con exito", image: imageBuscada});
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -77,7 +94,8 @@ const deleteImage = async (req, res) =>{
   try {
     const id = req.params.id
     const imageBuscada = await Post_Image.findByIdAndDelete(id)
-    
+    await redisClient.del(`image:${id}`)
+    await redisClient.del('image:all')
     res.status(201).json({message: "Imagen borrada con exito"});
   } catch (error) {
       res.status(400).json({ error: error.message });
@@ -85,10 +103,15 @@ const deleteImage = async (req, res) =>{
 }
 const getAllPostImage = async (req,res) => {
   try{
+    const cacheKey = 'image:all'
+    const cached = await redisClient.get(cacheKey)
+    if(cached){
+      return res.status(200).json(JSON.parse(cached)).filter( element => element.post == req.params.id)
+    } 
     const idPost = req.params.id
     const postBuscado = await Post.findById(idPost)
       .populate('image')
-    
+    await redisClient.set(cacheKey, JSON.stringify(postBuscado), { EX: TTL })
     res.status(201).json(postBuscado)
   } catch (error) {
       res.status(400).json({ error: error.message });
