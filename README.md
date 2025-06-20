@@ -1,86 +1,98 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/NImNxoFn)
-# UnaHur - Red Anti-Social
 
-Se solicita el modelado y desarrollo de un sistema backend para una red social llamada **“UnaHur Anti-Social Net”**, inspirada en plataformas populares que permiten a los usuarios realizar publicaciones y recibir comentarios sobre las mismas.
 
-![Imagen](./assets/ANTI-SOCIALNET.jpeg)
+EndPoints:
+La ruta principal de acceso a la API es:
+http://localhost:3000
+Desde esta dirección se accede a todos los endpoints.
+**User**:
+-	User Post: ruta API (/user/createUser), método (POST), en lo que refiere a este método recibe un body con un objeto que contiene el nickName (mínimo de 8 caracteres, máximo de 12 y no puede ser vacío )  y email (debe contener formato de email y no puede ser vacío).
 
-# Contexto del Proyecto
+-	Get User: ruta API (/user/getUser/<-----IdDeBusqeda----->), método (GET), en lo que refiere a este método el ID ( No puede contener menos de 24 caracteres, no puede ser nulo, ni negativo) del usuario se pasa como parámetro de ruta al final del endpoint.
 
-En una primera reunión con los sponsors del proyecto, se definieron los siguientes requerimientos para el desarrollo de un **MVP (Producto Mínimo Viable)**:
 
-- El sistema debe permitir que un usuario registrado realice una publicación (post), incluyendo **obligatoriamente una descripción**. De forma opcional, se podrán asociar **una o más imágenes** a dicha publicación.
+-	Get All Users: ruta API (/user/getAllUsers), método (GET), en lo que refiera a este método permite obtener una lista de todos los usuarios registrados, incluye campos como: nickname, email, followers, following e id.
 
-- Las publicaciones pueden recibir **comentarios** por parte de otros usuarios.
+-	Update User NickName: ruta API  (/user/updateNickName/<-----IdDeBusqeda----->), método (PUT), en lo que refiere a este método, el ID del usuario se pasa como parámetro de ruta al final del endpoint, este hace una consulta y si el mismo existe. Permite modificar el nickname del usuario, siempre y cuando este dentro del rango de validaciones.
 
-- Las publicaciones pueden estar asociadas a **etiquetas (tags)**. Una misma etiqueta puede estar vinculada a múltiples publicaciones.
+-	Update User Email: ruta API  (/user/updateEmail/<-----IdDeBusqeda----->), método (PUT), en lo que refiere a este método, el ID del usuario se pasa como parámetro de ruta al final del endpoint, este hace una consulta y si el mismo existe. Permite modificar el email del usuario, siempre y cuando este dentro del rango de validaciones.
+	
 
-- Es importante que los **comentarios más antiguos que X meses** (valor configurable mediante variables de entorno, por ejemplo, 6 meses) **no se muestren** en la visualización de los posteos.
 
-####
+-	followUser: ruta API (/user/seguirUsuario/<-IdUsuario->/<- IdUsuarioASeguir->), método (POST), en lo que refiere a este método, se pasan dos ID como parametros de ruta, en donde el primero se trata del usuario y el ultimo, el usuario a seguir. En ambos casos se deben de validar de forma que existan usuarios registrados con esos ID y además que cumpla con los requerimientos previos. 
 
-# Entidades y Reglas de Negocio
+-	deleteUser: : ruta API (/user/deleteUser/<-IdUsuario-->), método (DELETE), en lo que refiere a este método, el ID del usuario se pasa como parámetro de ruta al final del endpoint, se realizan las validaciones necesarias, y por ultimo se valida si existe un usuario con ese ID, en caso de que existe, se elimina el mismo-
 
-Los sponsors definieron los siguientes nombres y descripciones para las entidades:
 
-- **User**: Representa a los usuarios registrados en el sistema. El campo `nickName` debe ser **único** y funcionará como identificador principal del usuario.
 
-- **Post**: Publicación realizada por un usuario en una fecha determinada que contiene el texto que desea publicar. Puede tener **cero o más imágenes** asociadas. Debe contemplarse la posibilidad de **agregar o eliminar imágenes** posteriormente.
+**Post**:
+-	Create Post: ruta API (/post/createPost), método (POST), en lo que refiere a este método recibe un body con un objeto que contiene el contenido (mínimo de 10 caracteres, máximo de 200 y no puede ser vacío) y nickName (es obligatorio y no puede ser vacío).
 
-- **Post_Images**: Entidad que registra las imágenes asociadas a los posts. Para el MVP, solo se requiere almacenar la **URL de la imagen alojada**.
+-	Get Post: ruta API (/post/getPost/<-----IdDeBusqeda----->), método (GET), en lo que refiere a este método el ID ( No puede contener menos de 24 caracteres, no puede ser nulo, ni negativo) del post se pasa como parámetro de ruta al final del endpoint. Incluye campos como: comentarios, imágenes y etiquetas.
 
-- **Comment**: Comentario que un usuario puede realizar sobre una publicación. Incluye la fecha en la que fue realizado y una indicación de si está **visible o no**, dependiendo de la configuración (X meses).
 
-- **Tag**: Etiqueta que puede ser asignada a un post. Una etiqueta puede estar asociada a **muchos posts**, y un post puede tener **múltiples etiquetas**.
+-	Get All Post: ruta API (/post/getAllPost), método (GET), en lo que refiera a este método permite obtener una lista de todos los post creados por los usuarios, incluye campos como: comentarios, imágenes y etiquetas.
 
-# Requerimientos Técnicos
+-	Get All User Post: ruta API (/post/getAllUserPost), método (GET), en lo que refiera a este método permite obtener una lista de todos los post creados por el usuario ID que se pasa como parámetro de ruta al final, incluye campos como: tags.
 
-1. **Modelado de Datos**
+-	Update Post: ruta API  (/post/updatePost/<-----IdPost----->), método (PUT), en lo que refiere a este método, el ID del post se pasa como parámetro de ruta al final del endpoint, este hace una consulta y si el mismo existe. Permite modificar el post, siempre y cuando este dentro del rango de validaciones.
 
-   - Diseñar el modelo documental que represtente todas las entidades definidas por los sponsor del proyecto. Queda a su criterio si usan relaciones embebidas o relaciones referenciadas a otros documentos.
+-	Delete Post: : ruta API (/post/deleteUser/<-IdPost-->), método (DELETE), en lo que refiere a este método, el ID del post se pasa como parámetro de ruta al final del endpoint, se realizan las validaciones necesarias, y por último se valida si existe un usuario con ese ID, en caso de que existe, se elimina el mismo-
 
-### Ejemplo referenciadas
 
-![referenciadas](./assets/Referenciada.png)
 
-2. **Desarrollo del Backend**
+**Post_Images**:
+-	Add images: ruta API(image/addImages/<- IdPost->), método (POST), en lo que refiere a este método se pasa el IdPost (debe existir el posteo) como parámetro de ruta al final del mismo y un body con un array que contiene las url(debe tener un formato url valido).
 
-   - Crear los **endpoints CRUD** necesarios para cada entidad.
+-	Get Image: ruta API (/image/getImage/<-----IdDeBusqeda----->), método (GET), en lo que refiere a este método el ID ( No puede contener menos de 24 caracteres, no puede ser nulo, ni negativo) del post se pasa como parámetro de ruta al final del endpoint. 
 
-   - Implementar las rutas necesarias para gestionar las relaciones entre entidades (por ejemplo: asociar imágenes a un post, etiquetas a una publicación, etc.).
 
-   - Desarrollar las validaciones necesarias para asegurar la integridad de los datos (schemas, validaciones de integridad referencial).
+-	Get All Images: ruta API (/image/getAllImages), método (GET), en lo que refiera a este método permite obtener una lista de todas las images creados por los usuarios.
 
-   - Desarrollar las funciones controladoras con una única responsabiliad evitando realizar comprobaciones innecesarias en esta parte del código.
+-	Get All Post Images: ruta API (/image/getImages/<-IdPost->), método (GET), en lo que refiera a este método permite obtener una lista de todas las imágenes del post señalado por el IdPost que se pasa como parámetro de ruta al final.
 
-3. **Configuración y Portabilidad**
+-	Update image: ruta API  (/image/updateImage/<-----IdImage----->), método (PUT), en lo que refiere a este método, el ID de la image se pasa como parámetro de ruta al final del endpoint, este hace una consulta y si el mismo existe. Permite modificar la url de image, siempre y cuando este dentro del rango de validaciones.
 
-   - El sistema debe poder cambiar de **base de datos** de forma transparente, utilizando configuración e instalación de dependencias adecuadas.
+-	Delete image: ruta API (/image/deleteImage/<-IdImage-->), método (DELETE), en lo que refiere a este método, el ID de la image se pasa como parámetro de ruta al final del endpoint, se realizan las validaciones necesarias, y por último se valida si existe una image con ese ID, en caso de que existe, se elimina el mismo-
 
-   - El sistema debe permitir configurar el **puerto de ejecución y variables de entorno** fácilmente.
 
-4. **Documentación**
 
-   - Generar la documentación de la API utilizando **Swagger (formato YAML)**, incluyendo todos los endpoints definidos.
 
-5. **Colecciones de Prueba**
 
-   - Entregar las colecciones necesarias para realizar pruebas (por ejemplo, colecciones de Postman o archivos JSON de ejemplo).
 
-###
 
-# Recomendaciones y ayudas
+**Comment**:
 
-Les entregamos este link que apunta a un front-end ya desarrollado para que puedan investigarlo y puedan crear el back-end que se ajuste lo maximo posiblel funcionamiento del front.
+-	Create comment: ruta API(comment/createComment/<- IdPost->), método (POST), en lo que refiere a este método se pasa el IdPost (debe existir el posteo) como parámetro de ruta al final del mismo y un body con un array que contiene el comentario(requerido, mínimo de 5 caracteres, máximo de 200 caracteres).
 
-[https://unahur.vmdigitai.com/redes-front/users](https://unahur.vmdigitai.com/redes-front/users)
+-	Get comment: ruta API (/comment/getComment/<-----IdComment----->), método (GET), en lo que refiere a este método el ID ( No puede contener menos de 24 caracteres, no puede ser nulo, ni negativo) del comment se pasa como parámetro de ruta al final del endpoint. Devuelve el comentario y el usuario que lo realizo.
 
-Por otro lado les dejamos la documentació de los endpoint para que también la puedan revisar y armar siguiendo este link
 
-[https://unahur.vmdigitai.com/swagger/](https://unahur.vmdigitai.com/swagger/)
+-	Get All Comments: ruta API (/comment/getAllcomment), método (GET), en lo que refiera a este método permite obtener una lista de todos los comments realizados.
 
-# Bonus
+-	Get All Post comment: ruta API (/comment/getAllComments/<-IdPost->), método (GET), en lo que refiera a este método permite obtener todos los comments del post señalado por el IdPost que se pasa como parámetro de ruta al final. Devuelve los comentarios y el usuario que lo realizo.
 
-- Hace el upload de las imganes que se asocian a un POST que lo guarden en una carpeta de imagenes dentro del servidor web.
-- ¿Cómo modelarías que un usuario pueda "seguir" a otros usuarios, y a su vez ser seguido por muchos? Followers
-- Con la información de los post no varia muy seguido que estrategias podrian utilizar la que la información no sea constantemente consultada desde la base de datos.
+-	Update comment: ruta API  (/comment/updatecomment/<-----IdComment----->), método (PUT), en lo que refiere a este método, el ID del comment se pasa como parámetro de ruta al final del endpoint, este hace una consulta y si el mismo existe. Permite modificar el comentario, siempre y cuando este dentro del rango de validaciones.
+
+-	Delete image: ruta API (/comment/deleteComment/<-IdComment-->), método (DELETE), en lo que refiere a este método, el ID del comment se pasa como parámetro de ruta al final del endpoint, se realizan las validaciones necesarias, y por último se valida si existe una image con ese ID, en caso de que existe, se elimina el mismo-
+
+
+
+
+**Tag**:
+
+-	Post tag: ruta API(tag/createTag), método (POST), en lo que refiere a este método, se manda un body con un objeto que contiene la descripción (requerido, mínimo de 5 caracteres, máximo de 50 caracteres, no puede ser vacio).
+
+-	Get tag: ruta API (/tag/getTag/<-----IdTag----->), método (GET), en lo que refiere a este método el ID ( No puede contener menos de 24 caracteres, no puede ser nulo, ni negativo) del tag se pasa como parámetro de ruta al final del endpoint.
+
+
+-	Get All tags: ruta API (/tag/getAllTags), método (GET), en lo que refiera a este método permite obtener una lista de todos los tags realizados.
+
+-	Add All Tags to Post: ruta API (tag/setTags/<-IdPost->), método (GET), en lo que refiera a este método permite agregar una lista de comments al post señalado por el IdPost que se pasa como parámetro de ruta al final.
+
+-	Update Tag: ruta API (/tag/updateTag/<-----IdTag----->), método (PUT), en lo que refiere a este método, el ID del tag se pasa como parámetro de ruta al final del endpoint, este hace una consulta y si el mismo existe. Permite modificar la descripcion, siempre y cuando este dentro del rango de validaciones.
+
+-	Delete image: ruta API (/tag/deleteTag/<-IdTag-->), método (DELETE), en lo que refiere a este método, el ID del tag se pasa como parámetro de ruta al final del endpoint, se realizan las validaciones necesarias, y por último se valida si existe una image con ese ID, en caso de que existe, se elimina el mismo-
+
+
+
+

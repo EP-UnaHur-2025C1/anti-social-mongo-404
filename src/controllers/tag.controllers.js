@@ -53,7 +53,7 @@ const updateTag = async (req, res) =>{
         await redisClient.del('tag:all')
         res.status(200).json(tagActualizado);
       } catch (error) {
-         res.status(400).json({ message: 'Error al actualizar el tag', error: error.message });
+        res.status(400).json({ message: 'Error al actualizar el tag', error: error.message });
       }
 }
 
@@ -113,5 +113,21 @@ const addAllTagsToPost = async (req, res) => {
   }
 };
 
+const getTagsToPost = async (req,res) => {
+  try {
+    const cacheKey = `tag:all`;
+    const cached = await redisClient.get(cacheKey);
+    if (cached) {
+      return res.status(200).json(JSON.parse(cached)).filter(element => element.post == req.params.id)
+    }
+    const idPost = req.params.id
+    const tags = await Post.findById(idPost).populate('tags')
+    await redisClient.set(cacheKey, JSON.stringify(tags), { EX: TTL})
+    res.status(200).json(tags);
 
-module.exports = {createTag,updateTag,deleteTag,addAllTagsToPost, getTag, getAllTags};
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+module.exports = {createTag,updateTag,deleteTag,addAllTagsToPost, getTag, getAllTags, getTagsToPost};

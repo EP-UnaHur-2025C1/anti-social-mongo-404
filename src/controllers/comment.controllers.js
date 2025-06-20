@@ -97,7 +97,7 @@ const getAllPostComment = async (req, res) => {
       return res.status(200).json(JSON.parse(cached)).filter( element => element.post == req.params.id)
     } 
     const comments = await Comment.find({ post: req.params.id }).populate('user');
-    await redisClient.set(cacheKey, JSON.stringify(data), { EX: TTL })
+    await redisClient.set(cacheKey, JSON.stringify(comments), { EX: TTL })
     res.status(200).json(comments);
   } catch (error) {
     res.status(400).json({ error: error.message });
