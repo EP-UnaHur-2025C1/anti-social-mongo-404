@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1716639b-2c68-4bd5-b906-f990131d6b0f",
+		"_postman_id": "906382c1-8fc5-47f5-af50-46f6561a1c7f",
 		"name": "Trabajo Practico Mongo Grupo 404",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "43875216"
@@ -136,6 +136,22 @@
 								"684c3786daeeb8a768da519f"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Follow User",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "delete User",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}
@@ -308,7 +324,10 @@
 					"name": "Get Tags to Post",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				}

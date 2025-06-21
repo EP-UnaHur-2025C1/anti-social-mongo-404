@@ -1,4 +1,7 @@
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+const axios = require('axios');
 const Post_Image = require('../db/models/post_image');
 const Post = require('../db/models/post');
 const redisClient = require('../db/config/redis.js');
@@ -58,24 +61,54 @@ const addAllImages = async (req, res) => {
   try {
     const id = req.params.id;
     const post = await Post.findById(id);
-    
+
     if (!Array.isArray(req.body)) {
       return res.status(400).json({ message: "El cuerpo de la petición debe ser un arreglo" });
     }
+
+    const folderPath = path.join(__dirname, '..', 'uploads');
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+    }
+
+    const savedImages = [];
+    const failedImages = [];
+
     for (const element of req.body) {
       if (element.url && typeof element.url === "string") {
-        const newImage = new Post_Image({ url: element.url });
-        await newImage.save();
-        post.image.push(newImage._id);
-        console.log(newImage)
+        try {
+          const { fileName } = await downloadImage(element.url, folderPath);
+          const relativePath = `/uploads/${fileName}`;
+          const newImage = new Post_Image({ url: element.url });
+          await newImage.save();
+          post.image.push(newImage._id);
+          savedImages.push(newImage);
+        } catch (error) {
+          failedImages.push({
+            url: element.url,
+            error: error.message,
+          });
+        }
+      } else {
+        failedImages.push({
+          url: element.url,
+          error: "URL inválida o no es string",
+        });
       }
     }
+
     await post.save();
-    await redisClient.del(`image:${req.params.id}`)
-    await redisClient.del('image:all')
-    res.status(201).json({ message: "Imágenes agregadas con éxito", });
+    await redisClient.del(`image:${req.params.id}`);
+    await redisClient.del('image:all');
+
+    return res.status(201).json({
+      message: "Proceso de subida finalizado",
+      exitosas: savedImages.length,
+      fallidas: failedImages.length,
+      errores: failedImages,
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -118,5 +151,24 @@ const getAllPostImage = async (req,res) => {
   }
 };
 
+
+const downloadImage = async (url, folderPath) => {
+  const fileName = Date.now() + '-' + Math.floor(Math.random() * 10000) + path.extname(url.split('?')[0]);
+  const filePath = path.join(folderPath, fileName);
+
+  const response = await axios({
+    method: 'GET',
+    url,
+    responseType: 'stream'
+  });
+
+  const writer = fs.createWriteStream(filePath);
+  response.data.pipe(writer);
+
+  return new Promise((resolve, reject) => {
+    writer.on('finish', () => resolve({ filePath, fileName }));
+    writer.on('error', reject);
+  });
+};
 
 module.exports = {getImg,addImage,addAllImages,updateImage,deleteImage,getAllPostImage, getAllImages  };
