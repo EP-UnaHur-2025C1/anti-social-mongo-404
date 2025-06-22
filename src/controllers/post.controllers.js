@@ -87,32 +87,7 @@ const deletePost = async (req, res) =>{
     res.status(400).json({ error: error.message });
   }
 }
-/*
-const getAllUserPost = async (req,res) => {
-    const user = await User.findOne({where:{id : req.params.id},
-    include: [{
-    model: Post,
-    as: 'post',
-    include: [
-      {
-        model: Comment,
-        as: 'comment'
-      },
-      {
-        model: Post_Image,
-        as: 'image'
-      },
-      {
-        model: Tag,
-        as: 'Tags'
-      }
-    ]
-  }]
-});
-    
-    res.status(200).json(user);
-};
-*/
+
 const getAllUserPost = async (req, res) => {
   try {
     const cacheKey = 'post:all'
