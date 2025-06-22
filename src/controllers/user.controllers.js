@@ -11,7 +11,7 @@ const getUsers = async (req,res) => {
       return res.status(200).json(JSON.parse(cached))
     }
     const id = req.params.id
-    const user = await User.findById(id);
+    const user = await User.findById(id).select('-__v');
     await redisClient.set(cacheKey, JSON.stringify(user), { EX: TTL })
     res.status(200).json(user);
   } catch (error) {
@@ -61,7 +61,7 @@ const updateNickName = async (req, res) => {
       req.params.id,
       { nickName }, 
       { new: true, runValidators: true } 
-    );
+    ).select('-__v');
     if (!userActualizado) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
@@ -81,7 +81,7 @@ const updateEmail = async (req, res) => {
       req.params.id,
       { email }, 
       { new: true, runValidators: true } 
-    );
+    ).select('-__v');
     await redisClient.del(`user:${req.params.id}`)
     await redisClient.del('user:all')
     res.status(200).json(userActualizado);

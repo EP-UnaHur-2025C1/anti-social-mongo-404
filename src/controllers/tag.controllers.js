@@ -12,7 +12,7 @@ const getTag = async (req, res) =>{
       return res.status(200).json(JSON.parse(cached))
     }
     const id = req.params.id
-    const tag = await Tag.findById(id);
+    const tag = await Tag.findById(id).select('-__v');
     await redisClient.set(cacheKey, JSON.stringify(tag), { EX: TTL })
     res.status(200).json(tag);
   } catch (error) {
@@ -27,7 +27,7 @@ const getAllTags = async (req,res) => {
     if(cached){
       return res.status(200).json(JSON.parse(cached))
     }
-    const tags = await Tag.find()
+    const tags = await Tag.find().select('-__v');
     await redisClient.set(cacheKey, JSON.stringify(tags), { EX: TTL })
     res.status(200).json(tags)
   } catch (error) {
@@ -48,7 +48,7 @@ const createTag = async (req, res) =>{
 
 const updateTag = async (req, res) =>{
     try {
-        const tagActualizado = await Tag.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const tagActualizado = await Tag.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }).select('-__v');
         await redisClient.del(`tag:${req.params.id}`)
         await redisClient.del('tag:all')
         res.status(200).json(tagActualizado);
@@ -69,36 +69,14 @@ const deleteTag = async (req, res) =>{
     }
 }
 
-/*
-const addTagToPost = async (req, res) => {
-  try {
-    const idPostABuscar = req.params.idPost;
-    const idTagABuscar = req.params.idTag;
-    const post = await Post.findById(idPostABuscar);
-    if (!post) return res.status(404).json({ error: "Post no encontrado" });
-
-    const tag = await Tag.findById(idTagABuscar);
-    if (!tag) return res.status(404).json({ error: "Tag no encontrado" });
-
-    if (!post.tags.includes(tag._id)) {
-      post.tags.push(tag._id);
-      await post.save();
-    }
-
-    res.status(201).json({ message: "Tag agregado con éxito" });
-  } catch (e) {
-    res.status(400).json({ error: e.message });
-  }
-};
-*/
 
 const addAllTagsToPost = async (req, res) => {
   try {
     const idPostABuscar = req.params.id;
-    const post = await Post.findById(idPostABuscar);
+    const post = await Post.findById(idPostABuscar).select('-__v');
     const tagIdsToAdd = [];
     for (const element of req.body) {
-      const tag = await Tag.findById(element.id);
+      const tag = await Tag.findById(element.id).select('-__v');
       if (tag && !post.tags.includes(tag._id)) {
         tagIdsToAdd.push(tag);
       }
@@ -121,7 +99,7 @@ const getTagsToPost = async (req,res) => {
       return res.status(200).json(JSON.parse(cached)).filter(element => element.post == req.params.id)
     }
     const idPost = req.params.id
-    const tags = await Post.findById(idPost).populate('tags')
+    const tags = await (Post.findById(idPost).populate('tags')).select('-__v');
     await redisClient.set(cacheKey, JSON.stringify(tags), { EX: TTL})
     res.status(200).json(tags);
 

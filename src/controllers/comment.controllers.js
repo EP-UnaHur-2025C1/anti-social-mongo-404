@@ -11,7 +11,7 @@ const getComment = async (req, res) => {
     if(cached){
       return res.status(200).json(JSON.parse(cached))
     }
-    const data = await Comment.findById(req.params.id).populate('user');
+    const data = await Comment.findById(req.params.id).select('-__v').populate('user');
     await redisClient.set(cacheKey, JSON.stringify(data), { EX: TTL })
     res.status(200).json(data);
   } catch (error) {
@@ -26,7 +26,7 @@ const getAllComments = async (req, res) => {
       if(cached){
         return res.status(200).json(JSON.parse(cached))
       }
-      const data = await Comment.find();
+      const data = await Comment.find().select('-__v');
       await redisClient.set(cacheKey, JSON.stringify(data), { EX: TTL })
       res.status(200).json(data);
     } catch (error) {
@@ -41,7 +41,7 @@ const createComment = async (req, res) => {
     if (!comentario) {
       return res.status(400).json({ error: 'El contenido del comentario es obligatorio.' });
     }
-    const post = await Post.findById(postId).populate('user');
+    const post = await Post.findById(postId).populate('user').select('-__v');
     const newComment = new Comment({
       comentario,
       post: post._id,
@@ -63,7 +63,7 @@ const updateComment = async (req, res) => {
       req.params.id,
       { comentario: req.body.comentario },
       { new: true, runValidators: true }
-    );
+    ).select('-__v');
     await redisClient.del(`comment:${req.params.id}`)
     await redisClient.del('comment:all')
     res.status(200).json({ message: "Comentario modificado con éxito", comment: commentBuscado });
@@ -96,7 +96,7 @@ const getAllPostComment = async (req, res) => {
     if(cached){
       return res.status(200).json(JSON.parse(cached)).filter( element => element.post == req.params.id)
     } 
-    const comments = await Comment.find({ post: req.params.id }).populate('user');
+    const comments = await Comment.find({ post: req.params.id }).select('-__v').populate('user');
     await redisClient.set(cacheKey, JSON.stringify(comments), { EX: TTL })
     res.status(200).json(comments);
   } catch (error) {

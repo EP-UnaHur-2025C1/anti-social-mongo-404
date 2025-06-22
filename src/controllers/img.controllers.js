@@ -15,7 +15,7 @@ const getImg = async (req, res) => {
       return res.status(200).json(JSON.parse(cached))
     }
     const id = req.params.id
-    const image = await Post_Image.findById(id); 
+    const image = await Post_Image.findById(id).select('-__v'); 
     await redisClient.set(cacheKey, JSON.stringify(image), { EX: TTL })
     res.status(200).json(image);
   } catch (error){
@@ -30,7 +30,7 @@ const getAllImages = async (req,res) => {
     if(cached){
       return res.status(200).json(JSON.parse(cached))
     }
-    const images = await Post_Image.find();
+    const images = await Post_Image.find().select('-__v');
     if(images.length > 0){
       await redisClient.set(cacheKey, JSON.stringify(images), { EX: TTL })
       res.status(200).json(images);
@@ -45,7 +45,7 @@ const getAllImages = async (req,res) => {
 const addImage = async (req, res) =>{
   try {
     const id = req.params.id
-    const post = await Post.findById(id)
+    const post = await Post.findById(id).select('-__v');
     const newImage = new Post_Image({ url: req.body.url });
     await newImage.save();
     post.image.push(newImage._id);
@@ -60,7 +60,7 @@ const addImage = async (req, res) =>{
 const addAllImages = async (req, res) => {
   try {
     const id = req.params.id;
-    const post = await Post.findById(id);
+    const post = await Post.findById(id).select('-__v');
 
     if (!Array.isArray(req.body)) {
       return res.status(400).json({ message: "El cuerpo de la petición debe ser un arreglo" });
@@ -115,7 +115,7 @@ const addAllImages = async (req, res) => {
 const updateImage = async (req, res) =>{
   try {
     const id = req.params.id
-    const imageBuscada = await Post_Image.findByIdAndUpdate(id, req.body, { new:true });
+    const imageBuscada = await Post_Image.findByIdAndUpdate(id, req.body, { new:true }).select('-__v');
     await redisClient.del(`image:${req.params.id}`)
     await redisClient.del('image:all')
     res.status(201).json({message: "Imagen modificada con exito", image: imageBuscada});
@@ -142,8 +142,7 @@ const getAllPostImage = async (req,res) => {
       return res.status(200).json(JSON.parse(cached)).filter( element => element.post == req.params.id)
     } 
     const idPost = req.params.id
-    const postBuscado = await Post.findById(idPost)
-      .populate('image')
+    const postBuscado = await Post.findById(idPost).select('-__v').populate('image');
     await redisClient.set(cacheKey, JSON.stringify(postBuscado), { EX: TTL })
     res.status(201).json(postBuscado)
   } catch (error) {

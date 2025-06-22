@@ -15,7 +15,7 @@ const getPost = async (req,res) => {
       return res.status(200).json(JSON.parse(cached))
     }
     const id = req.params.id
-    const postBuscado = await Post.findById(id).populate('comment').populate('image').populate('tags');
+    const postBuscado = await Post.findById(id).select('-__v').populate('comment').populate('image').populate('tags');
     await redisClient.set(cacheKey, JSON.stringify(postBuscado), { EX: TTL })
     res.status(200).json(postBuscado);
   } catch (error) {
@@ -30,7 +30,7 @@ const getAllPosts = async (req,res) => {
     if(cached){
       return res.status(200).json(JSON.parse(cached))
     }
-    const posts = await Post.find().populate('comment').populate('image').populate('tags');
+    const posts = await Post.find().select('-__v').populate('comment').populate('image').populate('tags');
     if(posts.length > 0){
       await redisClient.set(cacheKey, JSON.stringify(posts), { EX: TTL })
       res.status(200).json(posts);
@@ -45,7 +45,7 @@ const getAllPosts = async (req,res) => {
 const createPost = async (req, res) => {
   try {
     const { contenido, nickName } = req.body;
-    const user = await User.findOne({ nickName });
+    const user = await User.findOne({ nickName }).select('-__v');
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado con ese nickName' });
     }
@@ -67,7 +67,7 @@ const createPost = async (req, res) => {
 const updatePost = async (req, res) =>{
   try {
     const id = req.params.id
-    const postBuscado = await Post.findByIdAndUpdate(id, req.body, { new: true });
+    const postBuscado = await Post.findByIdAndUpdate(id, req.body, { new: true }).select('-__v');
     await redisClient.del(`post:${req.params.id}`)
     await redisClient.del('post:all')
     res.status(200).json({message: "Post actualizado con exito", post: postBuscado});
