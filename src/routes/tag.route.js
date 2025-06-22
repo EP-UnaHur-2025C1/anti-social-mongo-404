@@ -14,7 +14,6 @@ router.post("/createTag", validationSchemma(contenidoSchema), tagController.crea
 router.put("/updateTag/:id",invalidId,validSearch(Tag),validationSchemma(contenidoSchema), tagController.updateTag);
 router.delete("/deleteTag/:id",invalidId,validSearch(Tag), tagController.deleteTag);
 router.get("/getTagsToPost/:id", invalidId,validSearch(Post), tagController.getTagsToPost);
-///router.put("/setTag/:idPost/:idTag",validPostYTag,validationSchemma(contenidoSchema), tagController.addTagToPost); 
 router.put("/setTags/:id",validSearch(Post),validAllTags, tagController.addAllTagsToPost);
 
 module.exports = router;
