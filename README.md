@@ -97,7 +97,7 @@ Este proyecto corresponde al backend de **Anti-Social**, una red social. Permite
 3. Levantar servicios con Docker:
    
    docker-compose up
-   ```
+   
 
 4. Iniciar servidor:
    
