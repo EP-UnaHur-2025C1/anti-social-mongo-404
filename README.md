@@ -1,3 +1,98 @@
+Introducción:
+Este proyecto corresponde al backend de "Anti-Social", una red social con funcionalidades de posts, comentarios, imágenes, etiquetas, y autenticación de usuarios. Se desarrolló utilizando Node.js, Express.js, MongoDB, Redis y documentación mediante Swagger.
+ Tecnologías implementadas
+•	Node.js + Express: para el desarrollo del servidor backend.
+•	MongoDB: base de datos NoSQL para almacenar usuarios, posts, comentarios, etc.
+•	Redis: usado para almacenamiento en caché (por ejemplo, comentarios por TTL).
+•	Docker + Docker Compose: para la creación y administración de los contenedores de MongoDB, Redis y herramientas administrativas.
+•	Swagger UI: para documentar y probar la API.
+•	Multer: para manejo de subida de imágenes.
+•	dotenv: para configuración de variables de entorno.
+
+Conexión a la Base de Datos y Sistema de Caché
+Este proyecto utiliza MongoDB como base de datos principal y Redis como sistema de caché para mejorar el rendimiento y la eficiencia en la lectura de datos.
+Conexión a MongoDB
+La conexión a MongoDB se gestiona a través del archivo db.js, utilizando la biblioteca mongoose, que permite mapear documentos de la base de datos a objetos de JavaScript.
+Archivo: src/db/config/db.js
+Descripción:
+•	La URL de conexión (MONGO_URI) se obtiene del archivo .env, lo que permite manejar configuraciones sin exponer datos sensibles en el código.
+•	En caso de una conexión exitosa, se muestra un mensaje de confirmación por consola.
+•	Si ocurre un error, el mismo se captura y se muestra detalladamente.
+•	Este módulo es requerido en main.js para establecer la conexión antes de iniciar el servidor.
+Conexión a Redis
+Redis se usa como mecanismo de caché para guardar temporalmente ciertos datos, como los comentarios, mejorando así la velocidad de respuesta del sistema.
+Archivo: src/db/config/redis.js
+
+Descripción:
+•	Se configura el cliente Redis con la URL y contraseña especificadas en el archivo .env.
+•	La conexión incluye un tiempo de espera (timeout) de 10 segundos.
+•	Se manejan eventos de conexión y error para informar en consola el estado de Redis.
+•	Este cliente es utilizado en los controladores que necesitan guardar o leer datos de forma temporal (por ejemplo, en la lógica de comentarios).
+
+Variables de entorno relevantes (.env):
+•  MONGO_URI: conexión a MongoDB.
+•  REDIS_URL: URL del servidor Redis.
+•  REDIS_PASSWORD: clave de acceso para Redis.
+•  TTL: tiempo de vida en segundos para los datos cacheados (por ejemplo, comentarios).
+
+Relaciones entre Modelos
+Las relaciones entre los modelos están definidas utilizando referencias de Mongoose (ObjectId). Esto permite establecer vínculos entre documentos de distintas colecciones en MongoDB de forma eficiente.
+________________________________________
+👤 User
+•	1:N con Post
+Un usuario puede crear muchos posts.
+Relación:
+js
+CopiarEditar
+user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+•	1:N con Comment
+Un usuario puede realizar múltiples comentarios.
+Relación:
+js
+CopiarEditar
+user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+•	N:N con User (followers / following)
+Cada usuario puede seguir y ser seguido por muchos otros usuarios.
+Relación recursiva:
+js
+CopiarEditar
+followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+________________________________________
+📝 Post
+•	N:1 con User
+Cada post pertenece a un único usuario (autor).
+•	1:N con Comment
+Un post puede tener múltiples comentarios relacionados.
+Relación:
+js
+CopiarEditar
+comment: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
+•	1:N con Post_Image
+Un post puede tener varias imágenes asociadas.
+•	N:M con Tag
+Un post puede tener múltiples etiquetas, y una etiqueta puede pertenecer a múltiples posts.
+Relación bidireccional:
+js
+CopiarEditar
+tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }]
+________________________________________
+💬 Comment
+•	N:1 con Post
+Cada comentario está vinculado a un único post.
+•	N:1 con User
+Cada comentario es hecho por un usuario específico.
+________________________________________
+🏷️ Tag
+•	M:N con Post
+Las etiquetas pueden estar asociadas a múltiples publicaciones, y viceversa.
+(Relación solo reflejada en el modelo Post.)
+________________________________________
+🖼️ Post_Image
+•	N:1 con Post
+Varias imágenes pueden asociarse a un solo post.
+
+
 
 EndPoints:
 La ruta principal de acceso a la API es:
@@ -172,6 +267,23 @@ Nos devuelve todos los comentarios.
 -	En su ruta antes de llegar al controlador para por dos middleware genéricos de invalidId y valisSearch, tiene uno mas que es validationSchema(comentarioSchema) en donde valida el comentario. 
 -	Si todo esta bien, lanza un status 201 created y nos devuelve mensaje “Tag Eliminado”.
 -	En caso de que no se hayan cargado los datos correctamente, lanza status 400 Not Found, con el mensaje “ Bad request: no se encuentra el Tag buscado”
+
+
+
+
+
+# Bonus
+
+- Hace el upload de las imagenes que se asocian a un POST que lo guarden en una carpeta de imagenes dentro del servidor web.
+Para poder lograr el upload de las imágenes asociadas a un post se utlizo en primera instancia File System que sirve para crear o escribir archivos, se utilizó para guardar las imágenes localmente. Despues requerimos patch, que se implementó para construir la ruta de los archivos y para finalizar usamos axios que para descargar la imagen desde una URL externa, usando una petición.
+Esta implementación nos permite que las imágenes de un post sean descargadas, siempre y cuando sea una URL valida, eso quiere decir que debe existir realmente. En caso de que no se pueda descargar alguna o algunas imágenes, se agregaran a una lista de  fallidas. 
+
+
+- ¿Cómo modelarías que un usuario pueda "seguir" a otros usuarios, y a su vez ser seguido por muchos? Followers
+- Con la información de los post no varia muy seguido que estrategias podrian utilizar la que la información no sea constantemente consultada desde la base de datos.
+
+Podríamos utilizar guardar esos datos en la cache, asi el tiempo de respuesta se reduce.
+
 
 
 
