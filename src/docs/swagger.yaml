@@ -41,7 +41,6 @@ paths:
         - User
       summary: Obtener todos los usuarios
       description: Retorna una lista de todos los usuarios registrados.
-      tags:
         - Usuarios
       responses:
         '200':
@@ -90,7 +89,7 @@ paths:
               type: object
               properties:
                 nickName:
-                  type: 
+                  type: string
             example:
               nickName: otroNickName
       responses:
@@ -171,7 +170,6 @@ paths:
         - Post
       summary: Obtener todos los posts
       description: Retorna una lista de todos los posts registrados.
-      tags:
         - Posts
       responses:
         '200':
@@ -224,7 +222,7 @@ paths:
                   description: Contenido del post
       responses:
         '201':
-         description: Post creado exitosamente
+          description: Post creado exitosamente
         '400':
           description: Solicitud inválida, falta nickName o contenido
 
@@ -286,7 +284,6 @@ paths:
         - Image
       summary: Obtener todas las imágenes
       description: Retorna una lista de todas las imágenes registradas.
-      tags:
         - Imágenes
       responses:
         '200':
@@ -371,7 +368,7 @@ paths:
       responses:
         '204':
           description: Imagen eliminada
-  /image/getImages/{id}:
+  /image/getImagesToPost/{id}:
     get:
       tags:
         - Image
@@ -406,7 +403,6 @@ paths:
         - Comment
       summary: Obtener todos los comentarios
       description: Retorna una lista de todos los comentarios registrados.
-      tags:
         - Comentarios
       responses:
         '200':
@@ -420,7 +416,7 @@ paths:
         '500':
           description: Error del servidor
 
-  /comment/getAllComments/{id}:
+  /comment/getAllPostComments/{id}:
     get:
       tags:
         - Comment
@@ -515,7 +511,7 @@ paths:
         - Tag
       summary: Obtener todas las etiquetas
       description: Retorna una lista de todas las etiquetas registradas.
-      tags:
+
         - Etiquetas
       responses:
         '201':
